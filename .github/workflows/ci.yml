@@ -7,11 +7,13 @@ on:
   pull_request: 
     branches: [ main ] 
 
-jobs: 
-  
+jobs:  
   test: 
     name: Run Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
 
     services:
       postgres:
@@ -27,10 +29,11 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    
     steps:
 
     - name: Set up Go 1.x
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v2      
       with:
         go-version: ^1.15
       id: go
