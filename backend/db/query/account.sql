@@ -11,7 +11,7 @@ INSERT INTO accounts (
   $1, $2, $3, $4, $5, $6, $7
 ) RETURNING *;
 
--- name: GetAccount :one
+-- name: GetAccountById :one
 SELECT * FROM accounts
 WHERE id = $1 LIMIT 1;
 
@@ -43,11 +43,11 @@ AND
 AND
   a.date = $6;
 
--- name: GetAccountsReports :one
+-- name: GetAccountsReportsByUserId :one
 SELECT SUM(value) AS sum_value FROM accounts
 WHERE user_id = $1 AND type = $2;
 
--- name: GetAccountsGraph :one
+-- name: GetAccountsGraphByUserId :one
 SELECT COUNT(*) FROM accounts
 WHERE user_id = $1 AND type = $2;
 
@@ -57,6 +57,6 @@ SET title = $2, description = $3, value = $4
 WHERE id = $1
 RETURNING *;
 
--- name: DeleteAccount :exec
+-- name: DeleteAccountById :exec
 DELETE FROM accounts
 WHERE id = $1;

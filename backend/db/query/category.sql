@@ -8,7 +8,7 @@ INSERT INTO categories (
   $1, $2, $3, $4
 ) RETURNING *;
 
--- name: GetCategory :one
+-- name: GetCategoryById :one
 SELECT * FROM categories
 WHERE id = $1 LIMIT 1;
 
@@ -29,6 +29,6 @@ SET title = $2, description = $3
 WHERE id = $1
 RETURNING *;
 
--- name: DeleteCategory :exec
+-- name: DeleteCategoryById :exec
 DELETE FROM categories
 WHERE id = $1;

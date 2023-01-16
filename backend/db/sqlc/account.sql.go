@@ -60,23 +60,23 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 	return i, err
 }
 
-const deleteAccount = `-- name: DeleteAccount :exec
+const deleteAccountById = `-- name: DeleteAccountById :exec
 DELETE FROM accounts
 WHERE id = $1
 `
 
-func (q *Queries) DeleteAccount(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteAccount, id)
+func (q *Queries) DeleteAccountById(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteAccountById, id)
 	return err
 }
 
-const getAccount = `-- name: GetAccount :one
+const getAccountById = `-- name: GetAccountById :one
 SELECT id, user_id, category_id, title, type, description, value, date, created_at FROM accounts
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetAccount(ctx context.Context, id int64) (Account, error) {
-	row := q.db.QueryRowContext(ctx, getAccount, id)
+func (q *Queries) GetAccountById(ctx context.Context, id int64) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccountById, id)
 	var i Account
 	err := row.Scan(
 		&i.ID,
@@ -182,35 +182,35 @@ func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Get
 	return items, nil
 }
 
-const getAccountsGraph = `-- name: GetAccountsGraph :one
+const getAccountsGraphByUserId = `-- name: GetAccountsGraphByUserId :one
 SELECT COUNT(*) FROM accounts
 WHERE user_id = $1 AND type = $2
 `
 
-type GetAccountsGraphParams struct {
+type GetAccountsGraphByUserIdParams struct {
 	UserID int64  `json:"user_id"`
 	Type   string `json:"type"`
 }
 
-func (q *Queries) GetAccountsGraph(ctx context.Context, arg GetAccountsGraphParams) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getAccountsGraph, arg.UserID, arg.Type)
+func (q *Queries) GetAccountsGraphByUserId(ctx context.Context, arg GetAccountsGraphByUserIdParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getAccountsGraphByUserId, arg.UserID, arg.Type)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
-const getAccountsReports = `-- name: GetAccountsReports :one
+const getAccountsReportsByUserId = `-- name: GetAccountsReportsByUserId :one
 SELECT SUM(value) AS sum_value FROM accounts
 WHERE user_id = $1 AND type = $2
 `
 
-type GetAccountsReportsParams struct {
+type GetAccountsReportsByUserIdParams struct {
 	UserID int64  `json:"user_id"`
 	Type   string `json:"type"`
 }
 
-func (q *Queries) GetAccountsReports(ctx context.Context, arg GetAccountsReportsParams) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getAccountsReports, arg.UserID, arg.Type)
+func (q *Queries) GetAccountsReportsByUserId(ctx context.Context, arg GetAccountsReportsByUserIdParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getAccountsReportsByUserId, arg.UserID, arg.Type)
 	var sum_value int64
 	err := row.Scan(&sum_value)
 	return sum_value, err

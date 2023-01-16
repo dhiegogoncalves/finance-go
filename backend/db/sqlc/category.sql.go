@@ -46,13 +46,13 @@ func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) 
 	return i, err
 }
 
-const deleteCategory = `-- name: DeleteCategory :exec
+const deleteCategoryById = `-- name: DeleteCategoryById :exec
 DELETE FROM categories
 WHERE id = $1
 `
 
-func (q *Queries) DeleteCategory(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteCategory, id)
+func (q *Queries) DeleteCategoryById(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteCategoryById, id)
 	return err
 }
 
@@ -110,13 +110,13 @@ func (q *Queries) GetCategories(ctx context.Context, arg GetCategoriesParams) ([
 	return items, nil
 }
 
-const getCategory = `-- name: GetCategory :one
+const getCategoryById = `-- name: GetCategoryById :one
 SELECT id, user_id, title, type, description, created_at FROM categories
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetCategory(ctx context.Context, id int64) (Category, error) {
-	row := q.db.QueryRowContext(ctx, getCategory, id)
+func (q *Queries) GetCategoryById(ctx context.Context, id int64) (Category, error) {
+	row := q.db.QueryRowContext(ctx, getCategoryById, id)
 	var i Category
 	err := row.Scan(
 		&i.ID,
