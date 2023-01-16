@@ -31,7 +31,7 @@ type CreateAccountParams struct {
 	Title       string    `json:"title"`
 	Type        string    `json:"type"`
 	Description string    `json:"description"`
-	Value       string    `json:"value"`
+	Value       float64   `json:"value"`
 	Date        time.Time `json:"date"`
 }
 
@@ -136,7 +136,7 @@ type GetAccountsRow struct {
 	Title         string         `json:"title"`
 	Type          string         `json:"type"`
 	Description   string         `json:"description"`
-	Value         string         `json:"value"`
+	Value         float64        `json:"value"`
 	Date          time.Time      `json:"date"`
 	CreatedAt     time.Time      `json:"created_at"`
 	CategoryTitle sql.NullString `json:"category_title"`
@@ -182,36 +182,36 @@ func (q *Queries) GetAccounts(ctx context.Context, arg GetAccountsParams) ([]Get
 	return items, nil
 }
 
-const getAccountsGraphByUserId = `-- name: GetAccountsGraphByUserId :one
+const getAccountsGraph = `-- name: GetAccountsGraph :one
 SELECT COUNT(*) FROM accounts
 WHERE user_id = $1 AND type = $2
 `
 
-type GetAccountsGraphByUserIdParams struct {
+type GetAccountsGraphParams struct {
 	UserID int64  `json:"user_id"`
 	Type   string `json:"type"`
 }
 
-func (q *Queries) GetAccountsGraphByUserId(ctx context.Context, arg GetAccountsGraphByUserIdParams) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getAccountsGraphByUserId, arg.UserID, arg.Type)
+func (q *Queries) GetAccountsGraph(ctx context.Context, arg GetAccountsGraphParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getAccountsGraph, arg.UserID, arg.Type)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
 }
 
-const getAccountsReportsByUserId = `-- name: GetAccountsReportsByUserId :one
-SELECT SUM(value) AS sum_value FROM accounts
+const getAccountsReports = `-- name: GetAccountsReports :one
+SELECT SUM(value) :: decimal AS sum_value FROM accounts
 WHERE user_id = $1 AND type = $2
 `
 
-type GetAccountsReportsByUserIdParams struct {
+type GetAccountsReportsParams struct {
 	UserID int64  `json:"user_id"`
 	Type   string `json:"type"`
 }
 
-func (q *Queries) GetAccountsReportsByUserId(ctx context.Context, arg GetAccountsReportsByUserIdParams) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getAccountsReportsByUserId, arg.UserID, arg.Type)
-	var sum_value int64
+func (q *Queries) GetAccountsReports(ctx context.Context, arg GetAccountsReportsParams) (float64, error) {
+	row := q.db.QueryRowContext(ctx, getAccountsReports, arg.UserID, arg.Type)
+	var sum_value float64
 	err := row.Scan(&sum_value)
 	return sum_value, err
 }
@@ -224,10 +224,10 @@ RETURNING id, user_id, category_id, title, type, description, value, date, creat
 `
 
 type UpdateAccountParams struct {
-	ID          int64  `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Value       string `json:"value"`
+	ID          int64   `json:"id"`
+	Title       string  `json:"title"`
+	Description string  `json:"description"`
+	Value       float64 `json:"value"`
 }
 
 func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error) {

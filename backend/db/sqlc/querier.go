@@ -16,8 +16,8 @@ type Querier interface {
 	DeleteCategoryById(ctx context.Context, id int64) error
 	GetAccountById(ctx context.Context, id int64) (Account, error)
 	GetAccounts(ctx context.Context, arg GetAccountsParams) ([]GetAccountsRow, error)
-	GetAccountsGraphByUserId(ctx context.Context, arg GetAccountsGraphByUserIdParams) (int64, error)
-	GetAccountsReportsByUserId(ctx context.Context, arg GetAccountsReportsByUserIdParams) (int64, error)
+	GetAccountsGraph(ctx context.Context, arg GetAccountsGraphParams) (int64, error)
+	GetAccountsReports(ctx context.Context, arg GetAccountsReportsParams) (float64, error)
 	GetCategories(ctx context.Context, arg GetCategoriesParams) ([]Category, error)
 	GetCategoryById(ctx context.Context, id int64) (Category, error)
 	GetUserById(ctx context.Context, id int64) (User, error)

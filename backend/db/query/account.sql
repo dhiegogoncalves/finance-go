@@ -43,11 +43,11 @@ AND
 AND
   a.date = $6;
 
--- name: GetAccountsReportsByUserId :one
-SELECT SUM(value) AS sum_value FROM accounts
+-- name: GetAccountsReports :one
+SELECT SUM(value) :: decimal AS sum_value FROM accounts
 WHERE user_id = $1 AND type = $2;
 
--- name: GetAccountsGraphByUserId :one
+-- name: GetAccountsGraph :one
 SELECT COUNT(*) FROM accounts
 WHERE user_id = $1 AND type = $2;
 
